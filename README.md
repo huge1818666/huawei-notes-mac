@@ -2,6 +2,10 @@
 
 `华为备忘录` 是一个基于 `Swift + AppKit + WebKit` 的 macOS 原生小应用，用来更稳定地访问华为云空间备忘录。它把网页能力包装成独立桌面应用，并通过轻量保活、网络恢复检测和前后台切换检查，尽量减少长时间挂着不用后掉线的问题。
 
+GitHub 仓库地址：
+
+`https://github.com/huge1818666/huawei-notes-mac`
+
 ## 适合谁用
 
 - 想把华为备忘录当成单独的 macOS 应用来用
@@ -32,7 +36,14 @@ xcode-select --install
 
 ## 构建与启动
 
-在仓库根目录执行：
+先克隆仓库并进入目录：
+
+```bash
+git clone https://github.com/huge1818666/huawei-notes-mac.git
+cd huawei-notes-mac
+```
+
+然后在仓库根目录执行：
 
 ```bash
 chmod +x build-app.sh

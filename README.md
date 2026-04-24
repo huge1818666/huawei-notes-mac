@@ -6,6 +6,14 @@ GitHub 仓库地址：
 
 `https://github.com/huge1818666/huawei-notes-mac`
 
+## 当前版本
+
+- 当前仓库版本：`1.0.0`
+- 版本来源文件：`VERSION`
+- 应用版本写入位置：`.app/Contents/Info.plist`
+- 变更记录：`CHANGELOG.md`
+- 发布与回退说明：`docs/发布与版本管理.md`
+
 ## 适合谁用
 
 - 想把华为备忘录当成单独的 macOS 应用来用
@@ -57,6 +65,8 @@ open "build/华为备忘录.app"
 build/华为备忘录.app
 ```
 
+构建脚本会自动读取根目录的 `VERSION`，并把相同版本号写入应用元数据，方便后续 GitHub Release、版本比对和版本回退。
+
 第一次打开后，请在应用内重新登录华为云空间。这个应用使用独立容器，不会直接复用 Safari 已保存的登录状态。
 
 ## 可选配置
@@ -83,11 +93,12 @@ defaults write com.codex.huaweinotes ReloadOnEveryProbe -bool false
 defaults delete com.codex.huaweinotes
 ```
 
-## 已知限制
+## 版本管理约定
 
-- 如果华为服务端主动要求重新登录，这个应用只能缓解掉线，不能保证永不失效
-- 初次登录、验证码、二次验证等流程仍需手动完成
-- 这是非官方桌面包装器，与华为官方没有从属关系
+- 使用语义化版本号：`主版本.次版本.修订号`
+- 每次发布前至少同步更新 `VERSION` 和 `CHANGELOG.md`
+- Git Tag 统一采用 `vX.Y.Z`，例如 `v1.0.0`
+- 发布和回退流程请看 `docs/发布与版本管理.md`
 
 ## 项目结构
 
@@ -95,10 +106,19 @@ defaults delete com.codex.huaweinotes
 .
 ├── AppBundle/                  # Info.plist 与应用图标资源
 ├── Sources/HuaweiNotesNative/  # Swift 源码
+├── VERSION                     # 仓库唯一版本来源
+├── CHANGELOG.md                # 版本变更记录
+├── docs/发布与版本管理.md       # GitHub 发布、打标、回退说明
 ├── build-app.sh                # 一键构建 .app
 ├── Package.swift               # Swift Package 定义
 └── huawei-notes-keepalive.applescript
 ```
+
+## 已知限制
+
+- 如果华为服务端主动要求重新登录，这个应用只能缓解掉线，不能保证永不失效
+- 初次登录、验证码、二次验证等流程仍需手动完成
+- 这是非官方桌面包装器，与华为官方没有从属关系
 
 ## 许可证
 

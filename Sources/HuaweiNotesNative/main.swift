@@ -5,11 +5,16 @@ import WebKit
 enum AppConfig {
     static let bundleIdentifier = "com.codex.huaweinotes"
     static let appDisplayName = "华为备忘录"
+    static let fallbackAppVersion = "1.0.0"
     static let defaultHomeURL = "https://cloud.huawei.com/"
     static let defaultNotesURL = "https://cloud.huawei.com/home#/notepad/note/allNote"
     static let defaultKeepAliveSeconds: TimeInterval = 240
     static let minimumReloadGap: TimeInterval = 15
     static let reconnectDelay: TimeInterval = 1.5
+
+    static var appVersion: String {
+        (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String) ?? fallbackAppVersion
+    }
 
     static var homeURL: URL {
         let rawValue = UserDefaults.standard.string(forKey: "HomeURL") ?? defaultHomeURL
@@ -88,7 +93,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         mainMenu.addItem(appMenuItem)
         let appMenu = NSMenu(title: AppConfig.appDisplayName)
         appMenuItem.submenu = appMenu
-        appMenu.addItem(withTitle: "关于\(AppConfig.appDisplayName)", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+        appMenu.addItem(withTitle: "关于\(AppConfig.appDisplayName)（v\(AppConfig.appVersion)）", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
         appMenu.addItem(.separator())
 
         let hideItem = NSMenuItem(title: "隐藏\(AppConfig.appDisplayName)", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")

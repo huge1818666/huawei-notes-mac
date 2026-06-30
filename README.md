@@ -24,15 +24,18 @@ GitHub 仓库地址：
 ## 主要特性
 
 - 独立 `WKWebView` 数据存储，登录态不会和 Safari 混在一起
-- 定时执行轻量保活，默认不是整页强刷
+- WebKit profile 会保存完整网站数据，登录 Cookie 也会额外备份到本应用的 `Application Support` 文件中
+- 启动时默认恢复 CookieVault 备份，用来弥补华为云空间在 WebKit profile 恢复不完整时掉回登录页的问题
+- 定时执行华为云空间 `/refreshLoginStatus` 登录态刷新，默认不是整页强刷
 - 检测到页面疑似离线时自动重载
 - 检测网络恢复后自动重试连接
 - 从后台回到前台时自动触发一次连接检查
+- 唤醒、心跳、登录页自救会写入脱敏诊断日志，方便排查掉线原因
 - 尽量避开正在编辑输入的时机，减少打断
 
 ## 系统要求
 
-- macOS 13 及以上
+- macOS 14 及以上
 - 已安装 Xcode Command Line Tools
 - 需要你自行登录华为账号
 
@@ -76,16 +79,26 @@ build/华为备忘录.app
 ```bash
 defaults write com.codex.huaweinotes HomeURL -string "https://cloud.huawei.com/"
 defaults write com.codex.huaweinotes StartURL -string "https://cloud.huawei.com/home#/notepad/note/allNote"
-defaults write com.codex.huaweinotes KeepAliveSeconds -float 180
+defaults write com.codex.huaweinotes KeepAliveSeconds -float 60
 defaults write com.codex.huaweinotes ReloadOnEveryProbe -bool false
+defaults write com.codex.huaweinotes RestoreCookieVaultOnLaunch -bool true
 ```
 
 配置项说明：
 
 - `HomeURL`：点击“主页”时打开的地址，默认是华为云空间首页
 - `StartURL`：点击“备忘录”或默认进入时使用的地址
-- `KeepAliveSeconds`：保活间隔，默认 `240` 秒，最小有效值为 `60`
+- `KeepAliveSeconds`：保活/状态探测间隔，默认 `60` 秒，最小有效值为 `60`
 - `ReloadOnEveryProbe`：是否每次探测都整页刷新，默认 `false`
+- `RestoreCookieVaultOnLaunch`：是否启动时从 CookieVault 备份恢复 Cookie，默认 `true`；排查 WebKit profile 问题时可临时设为 `false`
+
+诊断日志路径：
+
+```text
+~/Library/Logs/HuaweiNotes/session.log
+```
+
+日志只记录事件、状态码、脱敏 URL、Cookie 数量等信息，不记录 Cookie value 或笔记内容。
 
 恢复默认配置：
 

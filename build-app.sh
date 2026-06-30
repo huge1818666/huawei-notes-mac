@@ -9,7 +9,8 @@ APP_DIR="$BUILD_DIR/${PRODUCT_NAME}.app"
 CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
-ICON_SOURCE="$ROOT_DIR/AppBundle/Resources/ApplicationIcon-source.png"
+ICONSET_SOURCE="$ROOT_DIR/AppBundle/Resources/AppIcon.iconset"
+ICON_FILE="$ROOT_DIR/AppBundle/Resources/ApplicationIcon.icns"
 SWIFTPM_ROOT_MARKER="$ROOT_DIR/.build/.workspace-root"
 VERSION_FILE="$ROOT_DIR/VERSION"
 
@@ -43,6 +44,10 @@ printf '%s\n' "$ROOT_DIR" > "$SWIFTPM_ROOT_MARKER"
 
 swift build -c release
 
+if [ -d "$ICONSET_SOURCE" ] && command -v iconutil >/dev/null 2>&1; then
+  iconutil -c icns "$ICONSET_SOURCE" -o "$ICON_FILE"
+fi
+
 rm -rf "$APP_DIR"
 mkdir -p "$MACOS_DIR"
 mkdir -p "$RESOURCES_DIR"
@@ -57,20 +62,6 @@ fi
 
 if [ -d "$ROOT_DIR/AppBundle/Resources" ]; then
   cp -R "$ROOT_DIR/AppBundle/Resources/." "$RESOURCES_DIR/"
-fi
-
-if [ -f "$ICON_SOURCE" ] && command -v sips >/dev/null 2>&1 && command -v DeRez >/dev/null 2>&1 && command -v Rez >/dev/null 2>&1 && command -v SetFile >/dev/null 2>&1; then
-  TMP_ICON="$BUILD_DIR/.app-icon.png"
-  TMP_RSRC="$BUILD_DIR/.app-icon.rsrc"
-  ICON_RESOURCE_FILE="$APP_DIR"/$'Icon\r'
-  cp "$ICON_SOURCE" "$TMP_ICON"
-  sips -i "$TMP_ICON" >/dev/null
-  DeRez -only icns "$TMP_ICON" > "$TMP_RSRC"
-  rm -f "$ICON_RESOURCE_FILE"
-  Rez -append "$TMP_RSRC" -o "$ICON_RESOURCE_FILE"
-  SetFile -a C "$APP_DIR"
-  SetFile -a V "$ICON_RESOURCE_FILE"
-  rm -f "$TMP_ICON" "$TMP_RSRC"
 fi
 
 if command -v codesign >/dev/null 2>&1; then
